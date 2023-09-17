@@ -23,7 +23,7 @@ public class Product {
         this.rating = 0;
         this.createdAt = new Date();
         this.lastModifiedAt = createdAt;
-        if(name == null || id == null || category == null || name.length() < 2) {
+        if(name == null || id == null || category == null || name.trim().length() < 2) {
             throw new IllegalArgumentException();
         }
     }
@@ -35,6 +35,19 @@ public class Product {
             }
         }
         return new ProductCopy(false, "", "", Category.values()[0], 0, new Date(), new Date());
+    }
+
+    public static String updateProduct(ProductCopy updatedProduct) {
+        for(Product p: allProducts) {
+            if(p.id == updatedProduct.id()) {
+                p.category = updatedProduct.category();
+                p.name = updatedProduct.name();
+                p.rating = updatedProduct.rating();
+                p.lastModifiedAt = new Date();
+                return "Successfully updated";
+            }
+        }
+        return "Error updating";
     }
     
     public static void addProduct(String id, Category category) {
@@ -48,11 +61,6 @@ public class Product {
             productsCopy.add(new ProductCopy(true, p.id, p.name, p.category, p.rating, p.createdAt, p.lastModifiedAt));
         }
         return productsCopy;
-    }
-
-    public static List<ProductCopy> getProductsByCategory(Category category) {
-        return getAllProducts().stream().filter((p) -> {return p.category() == category;}).toList();
-
     }
 
     private static void addToAllProducts(Product product) {

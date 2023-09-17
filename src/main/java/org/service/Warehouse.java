@@ -18,36 +18,45 @@ public class Warehouse {
     }
 
     public List<ProductCopy> getAllProducts() {
+        //Returns a list of all saved products
+        //Could be empty if no products have been added
         return Product.getAllProducts();
     }
 
     public ProductCopy getProduct(String id) {
+        //Returns a ProductCopy object with field found set to true if found
+        //Returns a ProductCopy object with field found set to false if not found
         return Product.getProduct(id);
     }
 
-    public void getProductsByCategory(Category category) {
-        Product.getProductsByCategory(category);
+    public List<ProductCopy> getProductsByCategory(Category category) {
+        return Product.getAllProducts().stream().filter((p) -> {return p.category() == category;}).toList();
     }
 
-    public void getProductsAddedAfterGivenDate(Date startDate) {
-
+    public List<ProductCopy> getProductsAddedAfterGivenDate(Date startDate) {
+        return Product.getAllProducts().stream().filter((p) -> {return p.createdAt().compareTo(startDate) > 0;}).toList();
     }
 
-    public void getModifiedProducts() {
-
+    public List<ProductCopy> getModifiedProducts() {
+        return getAllProducts().stream().filter((p) -> {return p.createdAt() != p.lastModifiedAt();}).toList();
     }
 
-    public void updateName(String id, String newName) {
-
+    public String updateName(String id, String newName) {
+        ProductCopy product = Product.getProduct(id);
+        ProductCopy updatedProduct = new ProductCopy(true, product.id(), newName, product.category(), product.rating(), product.createdAt(), product.lastModifiedAt());
+        return Product.updateProduct(updatedProduct);
     }
 
-    public void updateRating(String id, int newRating) {
-
+    public String updateRating(String id, int newRating) {
+        ProductCopy product = Product.getProduct(id);
+        ProductCopy updatedProduct = new ProductCopy(true, product.id(), product.name(), product.category(), newRating, product.createdAt(), product.lastModifiedAt());
+        return Product.updateProduct(updatedProduct);
     } 
-    public void updateCategory(String id, String newCategory) {
-        
-    }  
-    public static void main(String[] args) {
-        System.out.println("Test");
-    }
+
+    public String updateCategory(String id, Category newCategory) {
+        ProductCopy product = Product.getProduct(id);
+        ProductCopy updatedProduct = new ProductCopy(true, product.id(), product.name(), newCategory, product.rating(), product.createdAt(), product.lastModifiedAt());
+        return Product.updateProduct(updatedProduct);
+    } 
+
 }
