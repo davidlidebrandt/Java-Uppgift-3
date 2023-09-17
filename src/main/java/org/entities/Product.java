@@ -1,71 +1,63 @@
 package org.entities;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class Product {
-
-    private static List<Product> allProducts = new ArrayList<>();
 
     private String id;
     private String name;
     private Category category;
     private int rating;
-    private final Date createdAt;
-    private Date lastModifiedAt;
-    
-    private Product(String name, Category category) {
+    private final LocalDate createdAt;
+    private LocalDate lastModifiedAt;
+
+    public Product(String name, Category category) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.category = category;
         this.rating = 0;
-        this.createdAt = new Date();
+        this.createdAt = LocalDate.now();
         this.lastModifiedAt = createdAt;
-        if(name == null || id == null || category == null || name.trim().length() < 2) {
+        if (name == null || id == null || category == null || name.trim().length() < 2) {
             throw new IllegalArgumentException();
         }
     }
 
-    public static ProductCopy getProduct(String id) {
-        for(Product p: allProducts) {
-            if(p.id == id) {
-                return new ProductCopy(true, p.id, p.name, p.category, p.rating, p.createdAt, p.lastModifiedAt);
-            }
+    public Product(String name, String id, Category category, int rating, LocalDate createdAt) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.rating = rating;
+        this.createdAt = createdAt;
+        this.lastModifiedAt = LocalDate.now();
+        if (name == null || id == null || category == null || name.trim().length() < 2) {
+            throw new IllegalArgumentException();
         }
-        return new ProductCopy(false, "", "", Category.values()[0], 0, new Date(), new Date());
     }
 
-    public static String updateProduct(ProductCopy updatedProduct) {
-        for(Product p: allProducts) {
-            if(p.id == updatedProduct.id()) {
-                p.category = updatedProduct.category();
-                p.name = updatedProduct.name();
-                p.rating = updatedProduct.rating();
-                p.lastModifiedAt = new Date();
-                return "Successfully updated";
-            }
-        }
-        return "Error updating";
-    }
-    
-    public static void addProduct(String id, Category category) {
-        Product product = new Product(id, category);
-        addToAllProducts(product);
-    }
-    
-    public static List<ProductCopy> getAllProducts() {
-        List <ProductCopy> productsCopy = new ArrayList<>();
-        for(Product p: allProducts) {
-            productsCopy.add(new ProductCopy(true, p.id, p.name, p.category, p.rating, p.createdAt, p.lastModifiedAt));
-        }
-        return productsCopy;
+    public String getId() {
+        return id;
     }
 
-    private static void addToAllProducts(Product product) {
-        allProducts.add(product);
+    public String getName() {
+        return name;
     }
-    
-   
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDate getLastModifiedAt() {
+        return lastModifiedAt;
+    }
+
 }

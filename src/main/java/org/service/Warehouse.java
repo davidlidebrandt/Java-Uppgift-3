@@ -1,6 +1,7 @@
 package org.service;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.entities.Category;
@@ -8,55 +9,110 @@ import org.entities.Product;
 import org.entities.ProductCopy;
 
 public class Warehouse {
+    private List<Product> allProducts;
+
+    public Warehouse(List<Product> products) {
+        this.allProducts = products;
+    }
+
+    public Warehouse() {
+        this.allProducts = new ArrayList<>();
+    }
+
     public String addProduct(String name, Category category) {
+
         try {
-            Product.addProduct(name, category);
+            Product newProduct = new Product(name, category);
+            allProducts.add(newProduct);
+            return newProduct.getId();
         } catch (Exception e) {
-            return "An error occurred when trying to add the product";
+            return "";
         }
-        return "Successfully added product";
     }
 
     public List<ProductCopy> getAllProducts() {
-        //Returns a list of all saved products
-        //Could be empty if no products have been added
-        return Product.getAllProducts();
+        // Returns a list of all saved products
+        // Could be empty if no products have been added
+        List<ProductCopy> productsCopy = new ArrayList<>();
+        for (Product p : allProducts) {
+            productsCopy.add(new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(),
+                    p.getCreatedAt(), p.getLastModifiedAt()));
+        }
+        return productsCopy;
     }
 
     public ProductCopy getProduct(String id) {
-        //Returns a ProductCopy object with field found set to true if found
-        //Returns a ProductCopy object with field found set to false if not found
-        return Product.getProduct(id);
+        // Returns a ProductCopy object with field found set to true if found
+        // Returns a ProductCopy object with field found set to false if not found
+        for (Product p : allProducts) {
+            if (p.getId() == id) {
+                return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
+                        p.getLastModifiedAt());
+            }
+        }
+        return new ProductCopy(false, "", "", Category.values()[0], 0, LocalDate.now(), LocalDate.now());
     }
 
-    public List<ProductCopy> getProductsByCategory(Category category) {
-        return Product.getAllProducts().stream().filter((p) -> {return p.category() == category;}).toList();
+    public List<ProductCopy> getProductsByCategory(Category category, List<ProductCopy> products) {
+        return products.stream().filter((p) -> {
+            return p.category() == category;
+        }).toList();
     }
 
-    public List<ProductCopy> getProductsAddedAfterGivenDate(Date startDate) {
-        return Product.getAllProducts().stream().filter((p) -> {return p.createdAt().compareTo(startDate) > 0;}).toList();
+    public List<ProductCopy> getProductsAddedAfterGivenDate(LocalDate startDate, List<ProductCopy> products) {
+        return products.stream().filter((p) -> {
+            return p.createdAt().compareTo(startDate) > 0;
+        }).toList();
     }
 
-    public List<ProductCopy> getModifiedProducts() {
-        return getAllProducts().stream().filter((p) -> {return p.createdAt() != p.lastModifiedAt();}).toList();
+    public List<ProductCopy> getModifiedProducts(List<ProductCopy> products) {
+        return products.stream().filter((p) -> {
+            return p.createdAt() != p.lastModifiedAt();
+        }).toList();
     }
 
-    public String updateName(String id, String newName) {
-        ProductCopy product = Product.getProduct(id);
-        ProductCopy updatedProduct = new ProductCopy(true, product.id(), newName, product.category(), product.rating(), product.createdAt(), product.lastModifiedAt());
-        return Product.updateProduct(updatedProduct);
+    public String updateName(String id, String newName, List<Product> products) {
+        ProductCopy product = getProduct(id);
+        
+        for (Product p : products) {
+            if (p.getId() == id) {
+                Product newProduct = new Product(p.getId(), newName, p.getCategory(), p.getRating(), p.getCreatedAt());
+                p = newProduct;
+                return "Successfully updated";
+            }
+        }
+        return "Error updating";
+
     }
 
-    public String updateRating(String id, int newRating) {
-        ProductCopy product = Product.getProduct(id);
-        ProductCopy updatedProduct = new ProductCopy(true, product.id(), product.name(), product.category(), newRating, product.createdAt(), product.lastModifiedAt());
-        return Product.updateProduct(updatedProduct);
-    } 
+    public String updateRating(String id, int newRating, List<Product> products) {
+        for (Product p : products) {
+            if (p.getId() == id) {
+                Product newProduct = new Product(p.getId(), p.getName(), p.getCategory(), newRating, p.getCreatedAt());
+                p = newProduct;
+                return "Successfully updated";
+            }
+        }
+        return "Error updating";
+    }
 
-    public String updateCategory(String id, Category newCategory) {
-        ProductCopy product = Product.getProduct(id);
-        ProductCopy updatedProduct = new ProductCopy(true, product.id(), product.name(), newCategory, product.rating(), product.createdAt(), product.lastModifiedAt());
-        return Product.updateProduct(updatedProduct);
-    } 
+    public String updateCategory(String id, Category newCategory, List<Product> products) {
+        for (Product p : products) {
+            if (p.getId() == id) {
+                Product newProduct = new Product(p.getId(), p.getName(), newCategory, p.getRating(), p.getCreatedAt());
+                p = newProduct;
+                return "Successfully updated";
+            }
+        }
+        return "Error updating";
+    }
+
+    public static void main(String[] args) {
+        Warehouse w = new Warehouse();
+        System.out.println(w.getAllProducts());
+        w.addProduct("Test", Category.CLOTHES);
+        System.out.println(w.getAllProducts());
+
+    }
 
 }
