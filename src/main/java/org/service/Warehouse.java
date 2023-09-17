@@ -1,25 +1,32 @@
 package org.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.entities.Category;
 import org.entities.Product;
+import org.entities.ProductCopy;
 
 public class Warehouse {
-    public void addProduct(String id, String name, Category category) {
-
+    public String addProduct(String name, Category category) {
+        try {
+            Product.addProduct(name, category);
+        } catch (Exception e) {
+            return "An error occurred when trying to add the product";
+        }
+        return "Successfully added product";
     }
 
-    public void getAllProducts() {
-
+    public List<ProductCopy> getAllProducts() {
+        return Product.getAllProducts();
     }
 
-    public void getProduct(String  id) {
-
+    public ProductCopy getProduct(String id) {
+        return Product.getProduct(id);
     }
 
     public void getProductsByCategory(Category category) {
-
+        Product.getProductsByCategory(category);
     }
 
     public void getProductsAddedAfterGivenDate(Date startDate) {

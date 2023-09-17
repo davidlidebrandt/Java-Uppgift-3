@@ -3,6 +3,7 @@ package org.entities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class Product {
 
@@ -15,54 +16,48 @@ public class Product {
     private final Date createdAt;
     private Date lastModifiedAt;
     
-    public Product(String id, String name, Category category) {
-        this.id = id;
+    private Product(String name, Category category) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.category = category;
         this.rating = 0;
         this.createdAt = new Date();
         this.lastModifiedAt = createdAt;
+        if(name == null || id == null || category == null || name.length() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public Category getCategory() {
-        return category;
-    }
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-    public int getRating() {
-        return rating;
-    }
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-    public Date getLastModifiedAt() {
-        return lastModifiedAt;
-    }
-    public void setLastModifiedAt(Date lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
-    }
-    public static List<Product> getAllProducts() {
-        return new ArrayList<>(allProducts);
-    }
-    public static void setAllProducts(List<Product> allProducts) {
-        Product.allProducts = allProducts;
-    }
-   
-    
 
+    public static ProductCopy getProduct(String id) {
+        for(Product p: allProducts) {
+            if(p.id == id) {
+                return new ProductCopy(true, p.id, p.name, p.category, p.rating, p.createdAt, p.lastModifiedAt);
+            }
+        }
+        return new ProductCopy(false, "", "", Category.values()[0], 0, new Date(), new Date());
+    }
+    
+    public static void addProduct(String id, Category category) {
+        Product product = new Product(id, category);
+        addToAllProducts(product);
+    }
+    
+    public static List<ProductCopy> getAllProducts() {
+        List <ProductCopy> productsCopy = new ArrayList<>();
+        for(Product p: allProducts) {
+            productsCopy.add(new ProductCopy(true, p.id, p.name, p.category, p.rating, p.createdAt, p.lastModifiedAt));
+        }
+        return productsCopy;
+    }
+
+    public static List<ProductCopy> getProductsByCategory(Category category) {
+        return getAllProducts().stream().filter((p) -> {return p.category() == category;}).toList();
+
+    }
+
+    private static void addToAllProducts(Product product) {
+        allProducts.add(product);
+    }
+    
+   
 }
