@@ -1,11 +1,12 @@
 package org.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Product {
-    enum Category {
-        CLOTHES, SHOES
-    }
+
+    private static List<Product> allProducts = new ArrayList<>();
 
     private String id;
     private String name;
@@ -14,12 +15,12 @@ public class Product {
     private final Date createdAt;
     private Date lastModifiedAt;
     
-    public Product(String id, String name, Category category, int rating, Date createdAt) {
+    public Product(String id, String name, Category category) {
         this.id = id;
         this.name = name;
         this.category = category;
-        this.rating = rating;
-        this.createdAt = createdAt;
+        this.rating = 0;
+        this.createdAt = new Date();
         this.lastModifiedAt = createdAt;
     }
     public String getId() {
@@ -55,5 +56,13 @@ public class Product {
     public void setLastModifiedAt(Date lastModifiedAt) {
         this.lastModifiedAt = lastModifiedAt;
     }
+    public static List<Product> getAllProducts() {
+        return new ArrayList<>(allProducts);
+    }
+    public static void setAllProducts(List<Product> allProducts) {
+        Product.allProducts = allProducts;
+    }
+   
+    
 
 }
