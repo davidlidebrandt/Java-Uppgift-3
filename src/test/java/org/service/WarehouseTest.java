@@ -34,6 +34,8 @@ public class WarehouseTest {
         
         assertNotEquals("", warehouse.addProduct("Test", Category.CLOTHES));
         assertEquals("", warehouse.addProduct("", Category.SHOES));
+        assertEquals(true, warehouse.getAllProducts().stream().anyMatch(p -> "Test".equals(p.name())));
+        assertEquals(1, warehouse.getAllProducts().size());
     }
 
     @Test
@@ -164,6 +166,7 @@ public class WarehouseTest {
         products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
         products.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
                 LocalDate.now().plusDays(4)));
+        
         return products;
     }
 }
