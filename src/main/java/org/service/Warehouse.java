@@ -41,10 +41,10 @@ public class Warehouse {
         return productsCopy;
     }
 
-    public ProductCopy getProduct(String id) {
+    public ProductCopy getProduct(String id, List<Product> products) {
         // Returns a ProductCopy object with field found set to true if found
         // Returns a ProductCopy object with field found set to false if not found
-        for (Product p : allProducts) {
+        for (Product p : products) {
             if (p.getId() == id) {
                 return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
                         p.getLastModifiedAt());
@@ -67,12 +67,11 @@ public class Warehouse {
 
     public List<ProductCopy> getModifiedProducts(List<ProductCopy> products) {
         return products.stream().filter((p) -> {
-            return p.createdAt() != p.lastModifiedAt();
+            return p.createdAt() != p.lastModifiedAt() && p.createdAt().compareTo(p.lastModifiedAt()) < 0;
         }).toList();
     }
 
     public String updateName(String id, String newName, List<Product> products) {
-        ProductCopy product = getProduct(id);
         
         for (Product p : products) {
             if (p.getId() == id) {

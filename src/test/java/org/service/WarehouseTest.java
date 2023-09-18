@@ -3,74 +3,81 @@ package org.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.entities.Category;
+import org.entities.Product;
 import org.entities.ProductCopy;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class WarehouseTest {
     Warehouse warehouse;
-    
-    @BeforeEach
-    void setUp() {
+    LocalDate createdAt = LocalDate.now().minusDays(20);
+    LocalDate createdLater = LocalDate.now();
+
+    @Test
+    void testGetEmptyProductListBeforeAddingProducts() {
         warehouse = new Warehouse();
+        assertEquals(new ArrayList<Product>(), warehouse.getAllProducts());
     }
 
-     @Test
-    void testGetAllProducts() {
-       
+    void testGetPopulatedProductList() {
+        warehouse = new Warehouse(getPopulatedList());
+        assertEquals(getPopulatedList(), warehouse.getAllProducts());
     }
 
     @Test
     void testAddProduct() {
+        warehouse = new Warehouse();
         assertNotEquals("", warehouse.addProduct("Test", Category.CLOTHES));
         assertEquals("", warehouse.addProduct("", Category.SHOES));
     }
-    
+
     @Test
     void testGetModifiedProducts() {
-        List<ProductCopy> fakeProductList = new ArrayList<>();
-        LocalDate now = LocalDate.now();
-        LocalDate later = now.plusDays(1);
-        fakeProductList.add(new ProductCopy(true, "dsdsdss2", "Big shoes", Category.SHOES, 1, now, later));
-        fakeProductList.add(new ProductCopy(true, "dsdsdss2", "Small shoes", Category.SHOES, 1, now, now));
-        fakeProductList.add(new ProductCopy(true, "dsdsdss2", "Medium shoes", Category.SHOES, 1, now, now));
-
+        warehouse = new Warehouse();
         List<ProductCopy> modifiedProducts = new ArrayList<>();
-        fakeProductList.add(new ProductCopy(true, "dsdsdss2", "Big shoes", Category.SHOES, 1, now, later));
-        assertEquals(warehouse.getModifiedProducts(fakeProductList), modifiedProducts);
-
+        modifiedProducts.add(
+                new ProductCopy(true, "3", "Large shoes", Category.SHOES, 3, createdAt, LocalDate.now().plusDays(2)));
+        modifiedProducts.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
+                LocalDate.now().plusDays(4)));
+        assertEquals(modifiedProducts, warehouse.getModifiedProducts(getProductCopiesList()));
     }
 
     @Test
     void testGetProduct() {
-        String id = warehouse.addProduct("Great shoe", Category.SHOES);
-        ProductCopy addedProduct = warehouse.getProduct(id);
-        assertEquals("Great shoe", addedProduct.name());
-        assertEquals(Category.SHOES, addedProduct.category());
-        assertEquals(true, addedProduct.found());
-        assertEquals(false, warehouse.getProduct("").found());
+        warehouse = new Warehouse(getPopulatedList());
+        assertEquals(true, warehouse.getProduct("1323", getPopulatedList()).found());
+        assertEquals(false, warehouse.getProduct(" ", getPopulatedList()).found());
     }
 
     @Test
     void testGetProductsAddedAfterGivenDate() {
-
+        warehouse = new Warehouse();
+        List<ProductCopy> products = new ArrayList<>();
+        products.add(new ProductCopy(true, "1", "Small shoes", Category.SHOES, 3, createdLater, createdAt));
+        products.add(
+                 new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
+        assertEquals(products, warehouse.getProductsAddedAfterGivenDate(createdAt, getProductCopiesList()));
     }
 
     @Test
     void testGetProductsByCategory() {
-
+        warehouse = new Warehouse();
+        List<ProductCopy> products = new ArrayList<>();
+        products.add(
+                new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
+        products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
+        products.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
+                LocalDate.now().plusDays(4)));
+        assertEquals(products, warehouse.getProductsByCategory(Category.CLOTHES, getProductCopiesList()));
     }
 
     @Test
     void testUpdateCategory() {
-        String id = warehouse.addProduct("New", Category.CLOTHES);
-        
+
     }
 
     @Test
@@ -81,5 +88,31 @@ public class WarehouseTest {
     @Test
     void testUpdateRating() {
 
+    }
+
+    List<Product> getPopulatedList() {
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Small shoes", Category.SHOES));
+        products.add(new Product("Medium shoes", Category.SHOES));
+        products.add(new Product("Big shoes", "1323", Category.SHOES, 4, LocalDate.now().minusDays(3)));
+        products.add(new Product("Small clothes", Category.CLOTHES));
+        products.add(new Product("Medium clothes", Category.CLOTHES));
+        products.add(new Product("Big clothes", "43344", Category.CLOTHES, 4, LocalDate.now().minusDays(5)));
+
+        return products;
+    }
+
+    List<ProductCopy> getProductCopiesList() {
+        List<ProductCopy> products = new ArrayList<>();
+        products.add(new ProductCopy(true, "1", "Small shoes", Category.SHOES, 3, createdLater, createdAt));
+        products.add(new ProductCopy(true, "2", "Medium shoes", Category.SHOES, 3, createdAt, createdAt));
+        products.add(
+                new ProductCopy(true, "3", "Large shoes", Category.SHOES, 3, createdAt, LocalDate.now().plusDays(2)));
+        products.add(
+                new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
+        products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
+        products.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
+                LocalDate.now().plusDays(4)));
+        return products;
     }
 }
