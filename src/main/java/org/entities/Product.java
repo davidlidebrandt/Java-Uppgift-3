@@ -24,7 +24,13 @@ public class Product {
         }
     }
 
-    public Product(String name, String id, Category category, int rating, LocalDate createdAt) {
+    @Override
+    public String toString() {
+        return "Product [id=" + id + ", name=" + name + ", category=" + category + ", rating=" + rating + ", createdAt="
+                + createdAt + ", lastModifiedAt=" + lastModifiedAt + "]";
+    }
+
+    public Product(String id, String name, Category category, int rating, LocalDate createdAt) {
         this.id = id;
         this.name = name;
         this.category = category;

@@ -41,13 +41,12 @@ public class Warehouse {
         return productsCopy;
     }
 
-    public ProductCopy getProduct(String id, List<Product> products) {
+    public ProductCopy getProduct(String id, List<ProductCopy> products) {
         // Returns a ProductCopy object with field found set to true if found
         // Returns a ProductCopy object with field found set to false if not found
-        for (Product p : products) {
-            if (p.getId() == id) {
-                return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
-                        p.getLastModifiedAt());
+        for (ProductCopy p : products) {
+            if (p.id() == id) {
+                return p;
             }
         }
         return new ProductCopy(false, "", "", Category.values()[0], 0, LocalDate.now(), LocalDate.now());
@@ -71,12 +70,13 @@ public class Warehouse {
         }).toList();
     }
 
-    public String updateName(String id, String newName, List<Product> products) {
+    public String updateName(String id, String newName) {
         
-        for (Product p : products) {
+        for (int i = 0; i < allProducts.size(); i++) {
+            Product p = allProducts.get(i);
             if (p.getId() == id) {
                 Product newProduct = new Product(p.getId(), newName, p.getCategory(), p.getRating(), p.getCreatedAt());
-                p = newProduct;
+                allProducts.set(i, newProduct);
                 return "Successfully updated";
             }
         }
@@ -84,22 +84,27 @@ public class Warehouse {
 
     }
 
-    public String updateRating(String id, int newRating, List<Product> products) {
-        for (Product p : products) {
+    public String updateRating(String id, int newRating) {
+        if(newRating < 1 || newRating > 10) {
+            return "Error updating";
+        }
+        for (int i = 0; i < allProducts.size(); i++) {
+            Product p = allProducts.get(i);
             if (p.getId() == id) {
                 Product newProduct = new Product(p.getId(), p.getName(), p.getCategory(), newRating, p.getCreatedAt());
-                p = newProduct;
+                allProducts.set(i, newProduct);
                 return "Successfully updated";
             }
         }
         return "Error updating";
     }
 
-    public String updateCategory(String id, Category newCategory, List<Product> products) {
-        for (Product p : products) {
+    public String updateCategory(String id, Category newCategory) {
+        for (int i = 0; i < allProducts.size(); i++) {
+            Product p = allProducts.get(i);
             if (p.getId() == id) {
                 Product newProduct = new Product(p.getId(), p.getName(), newCategory, p.getRating(), p.getCreatedAt());
-                p = newProduct;
+                allProducts.set(i, newProduct);
                 return "Successfully updated";
             }
         }
