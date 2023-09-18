@@ -110,13 +110,4 @@ public class Warehouse {
         }
         return "Error updating";
     }
-
-    public static void main(String[] args) {
-        Warehouse w = new Warehouse();
-        System.out.println(w.getAllProducts());
-        w.addProduct("Test", Category.CLOTHES);
-        System.out.println(w.getAllProducts());
-
-    }
-
 }
