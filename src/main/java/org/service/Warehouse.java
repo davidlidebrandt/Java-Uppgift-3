@@ -55,7 +55,7 @@ public class Warehouse {
     public List<ProductCopy> getProductsByCategory(Category category, List<ProductCopy> products) {
         return products.stream().filter((p) -> {
             return p.category() == category;
-        }).toList();
+        }).sorted((p1,p2) -> {return p1.name().compareTo(p2.name());}).toList();
     }
 
     public List<ProductCopy> getProductsAddedAfterGivenDate(LocalDate startDate, List<ProductCopy> products) {

@@ -73,11 +73,11 @@ public class WarehouseTest {
     void testGetProductsByCategory() {
         warehouse = new Warehouse();
         List<ProductCopy> products = new ArrayList<>();
-        products.add(
-                new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
-        products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
         products.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
                 LocalDate.now().plusDays(4)));
+        products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
+        products.add(
+                new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
         
         assertEquals(products, warehouse.getProductsByCategory(Category.CLOTHES, getProductCopiesList()));
     }
