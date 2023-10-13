@@ -41,21 +41,27 @@ public class Warehouse {
         return productsCopy;
     }
 
-    public ProductCopy getProduct(String id, List<ProductCopy> products) {
+    public ProductCopy getProduct(String id) {
         // Returns a ProductCopy object with field found set to true if found
         // Returns a ProductCopy object with field found set to false if not found
-        for (ProductCopy p : products) {
-            if (p.id() == id) {
-                return p;
+        for (Product p : allProducts) {
+            if (p.getId() == id) {
+                return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
+                        p.getLastModifiedAt());
             }
         }
         return new ProductCopy(false, "", "", Category.values()[0], 0, LocalDate.now(), LocalDate.now());
     }
 
-    public List<ProductCopy> getProductsByCategory(Category category, List<ProductCopy> products) {
-        return products.stream().filter((p) -> {
-            return p.category() == category;
-        }).sorted((p1,p2) -> {return p1.name().compareTo(p2.name());}).toList();
+    public List<ProductCopy> getProductsByCategory(Category category) {
+        return allProducts.stream().filter((p) -> {
+            return p.getCategory() == category;
+        }).map((p) -> {
+            return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
+                    p.getLastModifiedAt());
+        }).sorted((p1, p2) -> {
+            return p1.name().compareTo(p2.name());
+        }).toList();
     }
 
     public List<ProductCopy> getProductsAddedAfterGivenDate(LocalDate startDate, List<ProductCopy> products) {
@@ -71,7 +77,7 @@ public class Warehouse {
     }
 
     public String updateName(String id, String newName) {
-        
+
         for (int i = 0; i < allProducts.size(); i++) {
             Product p = allProducts.get(i);
             if (p.getId() == id) {
@@ -85,7 +91,7 @@ public class Warehouse {
     }
 
     public String updateRating(String id, int newRating) {
-        if(newRating < 1 || newRating > 10) {
+        if (newRating < 1 || newRating > 10) {
             return "Error updating";
         }
         for (int i = 0; i < allProducts.size(); i++) {

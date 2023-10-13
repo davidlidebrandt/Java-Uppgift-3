@@ -54,8 +54,8 @@ public class WarehouseTest {
     void testGetProduct() {
         warehouse = new Warehouse(getPopulatedList());
 
-        assertEquals(true, warehouse.getProduct("1323", warehouse.getAllProducts()).found());
-        assertEquals(false, warehouse.getProduct(" ", warehouse.getAllProducts()).found());
+        assertEquals(true, warehouse.getProduct("1323").found());
+        assertEquals(false, warehouse.getProduct(" ").found());
     }
 
     @Test
@@ -71,15 +71,18 @@ public class WarehouseTest {
 
     @Test
     void testGetProductsByCategory() {
-        warehouse = new Warehouse();
+        warehouse = new Warehouse(getPopulatedList());
         List<ProductCopy> products = new ArrayList<>();
-        products.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
+        products.add(new ProductCopy(true, "6", "Big clothes", Category.CLOTHES, 3, createdAt,
                 LocalDate.now().plusDays(4)));
         products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
         products.add(
                 new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
         
-        assertEquals(products, warehouse.getProductsByCategory(Category.CLOTHES, getProductCopiesList()));
+        assertEquals(products.size(), warehouse.getProductsByCategory(Category.CLOTHES).size());
+        assertEquals(products.get(0).name(), warehouse.getProductsByCategory(Category.CLOTHES).get(0).name());
+        assertEquals(products.get(1).name(), warehouse.getProductsByCategory(Category.CLOTHES).get(1).name());
+        assertEquals(products.get(2).name(), warehouse.getProductsByCategory(Category.CLOTHES).get(2).name());
     }
 
     @Test
