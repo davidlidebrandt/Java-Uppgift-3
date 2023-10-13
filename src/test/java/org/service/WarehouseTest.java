@@ -40,14 +40,8 @@ public class WarehouseTest {
 
     @Test
     void testGetModifiedProducts() {
-        warehouse = new Warehouse();
-        List<ProductCopy> modifiedProducts = new ArrayList<>();
-        modifiedProducts.add(
-                new ProductCopy(true, "3", "Large shoes", Category.SHOES, 3, createdAt, LocalDate.now().plusDays(2)));
-        modifiedProducts.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
-                LocalDate.now().plusDays(4)));
-        
-        assertEquals(modifiedProducts, warehouse.getModifiedProducts(getProductCopiesList()));
+        warehouse = new Warehouse(getPopulatedList());
+        assertEquals(4, warehouse.getModifiedProducts().size());
     }
 
     @Test
@@ -60,13 +54,16 @@ public class WarehouseTest {
 
     @Test
     void testGetProductsAddedAfterGivenDate() {
-        warehouse = new Warehouse();
+        warehouse = new Warehouse(getPopulatedList());
         List<ProductCopy> products = new ArrayList<>();
-        products.add(new ProductCopy(true, "1", "Small shoes", Category.SHOES, 3, createdLater, createdAt));
+        products.add(new ProductCopy(true, "1", "Big shoes", Category.SHOES, 3, createdLater, createdAt));
         products.add(
-                 new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
+                 new ProductCopy(true, "4", "Big clothes", Category.CLOTHES, 3, createdLater, createdAt));
         
-        assertEquals(products, warehouse.getProductsAddedAfterGivenDate(createdAt, getProductCopiesList()));
+        assertEquals(products.size(), warehouse.getProductsAddedAfterGivenDate(createdAt).size());
+        assertEquals(products.get(0).name(), warehouse.getProductsAddedAfterGivenDate(createdAt).get(0).name());
+        assertEquals(products.get(1).name(), warehouse.getProductsAddedAfterGivenDate(createdAt).get(1).name());
+    
     }
 
     @Test
@@ -148,28 +145,13 @@ public class WarehouseTest {
 
     List<Product> getPopulatedList() {
         List<Product> products = new ArrayList<>();
-        products.add(new Product("Small shoes", Category.SHOES));
-        products.add(new Product("Medium shoes", Category.SHOES));
-        products.add(new Product("1323", "Big shoes", Category.SHOES, 4, LocalDate.now().minusDays(3)));
-        products.add(new Product("Small clothes", Category.CLOTHES));
-        products.add(new Product("Medium clothes", Category.CLOTHES));
-        products.add(new Product("43344", "Big clothes", Category.CLOTHES, 4, LocalDate.now().minusDays(5)));
+        products.add(new Product("3232", "Small shoes", Category.SHOES, 3, createdAt));
+        products.add(new Product("437437", "Medium shoes", Category.SHOES, 7, createdAt));
+        products.add(new Product("1323", "Big shoes", Category.SHOES, 4, createdLater));
+        products.add(new Product("45454", "Small clothes", Category.CLOTHES, 5, createdAt));
+        products.add(new Product("8988", "Medium clothes", Category.CLOTHES, 7, createdAt));
+        products.add(new Product("43344", "Big clothes", Category.CLOTHES, 4, createdLater));
 
-        return products;
-    }
-
-    List<ProductCopy> getProductCopiesList() {
-        List<ProductCopy> products = new ArrayList<>();
-        products.add(new ProductCopy(true, "1", "Small shoes", Category.SHOES, 3, createdLater, createdAt));
-        products.add(new ProductCopy(true, "2", "Medium shoes", Category.SHOES, 3, createdAt, createdAt));
-        products.add(
-                new ProductCopy(true, "3", "Large shoes", Category.SHOES, 3, createdAt, LocalDate.now().plusDays(2)));
-        products.add(
-                new ProductCopy(true, "4", "Small clothes", Category.CLOTHES, 3, createdLater, createdAt));
-        products.add(new ProductCopy(true, "5", "Medium clothes", Category.CLOTHES, 3, createdAt, createdAt));
-        products.add(new ProductCopy(true, "6", "Large clothes", Category.CLOTHES, 3, createdAt,
-                LocalDate.now().plusDays(4)));
-        
         return products;
     }
 }

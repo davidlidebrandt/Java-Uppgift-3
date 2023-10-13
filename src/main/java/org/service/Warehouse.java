@@ -64,16 +64,20 @@ public class Warehouse {
         }).toList();
     }
 
-    public List<ProductCopy> getProductsAddedAfterGivenDate(LocalDate startDate, List<ProductCopy> products) {
-        return products.stream().filter((p) -> {
-            return p.createdAt().compareTo(startDate) > 0;
-        }).toList();
+    public List<ProductCopy> getProductsAddedAfterGivenDate(LocalDate startDate) {
+        return allProducts.stream().filter((p) -> {
+            return p.getCreatedAt().compareTo(startDate) > 0;
+        }).map((p) -> { return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
+                    p.getLastModifiedAt());})
+        .toList();
     }
 
-    public List<ProductCopy> getModifiedProducts(List<ProductCopy> products) {
-        return products.stream().filter((p) -> {
-            return p.createdAt() != p.lastModifiedAt() && p.createdAt().compareTo(p.lastModifiedAt()) < 0;
-        }).toList();
+    public List<ProductCopy> getModifiedProducts() {
+        return allProducts.stream().filter((p) -> {
+            return p.getCreatedAt() != p.getLastModifiedAt() && p.getCreatedAt().compareTo(p.getLastModifiedAt()) < 0;
+        }).map((p) -> { return new ProductCopy(true, p.getId(), p.getName(), p.getCategory(), p.getRating(), p.getCreatedAt(),
+                    p.getLastModifiedAt());})
+        .toList();
     }
 
     public String updateName(String id, String newName) {
